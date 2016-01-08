@@ -378,6 +378,37 @@ describe("ConfigFile", function() {
             });
         });
 
+
+        describe("Plugins", function() {
+
+            it("should load information from a YML file and load plugins", function() {
+
+                var StubbedPlugins = proxyquire("../../../lib/config/plugins", {
+                    "eslint-plugin-test": {
+                        environments: {
+                            bar: { globals: { bar: true } }
+                        }
+                    }
+                });
+
+                var StubbedConfigFile = proxyquire("../../../lib/config/config-file", {
+                    "./plugins": StubbedPlugins
+                });
+
+                var config = StubbedConfigFile.load(getFixturePath("plugins/.eslintrc.yml"));
+
+                assert.deepEqual(config, {
+                    parserOptions: {},
+                    env: { "test/bar": true },
+                    globals: {},
+                    plugins: [ "test" ],
+                    rules: {
+                        "test/foo": 2
+                    }
+                });
+            });
+        });
+
     });
 
     describe("resolve()", function() {
