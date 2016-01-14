@@ -1,7 +1,7 @@
 /**
  * @fileoverview Tests for ConfigOps
  * @author Ian VanSchooten
- * @copyright 2015 Ian VanSchooten. All rights reserved.
+ * @copyright 2016 Ian VanSchooten. All rights reserved.
  * See LICENSE file in root directory for full license.
  */
 
@@ -13,6 +13,7 @@
 
 var assert = require("chai").assert,
     ConfigRule = require("../../../lib/config/config-rule"),
+    loadRules = require("../../../lib/load-rules"),
     schema = require("../../fixtures/config-rule/schemas");
 
 //------------------------------------------------------------------------------
@@ -261,6 +262,24 @@ describe("ConfigRule", function() {
                 ];
                 assert.sameDeepMembers(actualConfigs, expectedConfigs);
             });
+        });
+    });
+
+    describe("createCoreRuleConfigs()", function() {
+
+        var rulesConfig = ConfigRule.createCoreRuleConfigs();
+
+        it("should create a rulesConfig containing all core rules", function() {
+            var coreRules = loadRules(),
+                expectedRules = Object.keys(coreRules),
+                actualRules = Object.keys(rulesConfig);
+
+            assert.sameMembers(actualRules, expectedRules);
+        });
+
+        it("should create arrays of configs for rules", function() {
+            assert.isArray(rulesConfig.quotes);
+            assert.include(rulesConfig.quotes, 2);
         });
     });
 });
